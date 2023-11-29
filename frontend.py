@@ -3,10 +3,12 @@ import json
 import numpy as np
 from PIL import Image
 import tensorflow as tf
-import fastai.vision.all 
+from fastai.data.all import *
+from fastai.vision.all import *
 from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 from openai import OpenAI
 import os
+import pathlib
 
 #api boot
 api = open("gpt_api.txt")
@@ -25,11 +27,17 @@ def precheck(streeng):
   else:
     return False
 
-# Load your trained model
-#path = path('dogdata')
-#learn = load_learner(path / 'export.pkl')
-# learn = tf.keras.models.load_model('./dogdata')
-# learn2 = tf.keras.models.load_model('./dog-emotions-prediction')
+# Load dog emotion classifier model
+model_path = 'model.pkl'
+
+# the following posix/windows stuff is to get it working on windows
+posix_backup = pathlib.PosixPath
+try:
+    pathlib.PosixPath = pathlib.WindowsPath
+    learn = load_learner(model_path)
+finally:
+    pathlib.PosixPath = posix_backup
+
 
 st.title("What Up Dog")
 
@@ -38,7 +46,7 @@ uploaded_file = st.file_uploader("Choose an image...", type=['jpg','png','raw','
 if uploaded_file is not None:
     # Preprocess the image
     img = Image.open(uploaded_file).convert('RGB')
-    img = img.resize((384, 384))  # adjust size as needed
+    img = img.resize((288, 288))  # adjust size as needed
 
     # Convert the image to a numpy array
     img_array = np.array(img)
@@ -59,8 +67,8 @@ if uploaded_file is not None:
         st.text("THAT'S NOT A DOG! (or our model didn't detect a dog, in which case we profusely apologize :( ))")
         
     #Setting dummy emotion
-    default_emo = "happy"
-    final_string = "You are a dog. If I were to take a picture of you right now you would be {}. Your tone and emotion would be considered {}".format(vit_to_string(result),default_emo)
+    emotion = learn.predict(uploaded_file)[0]
+    final_string = "You are a dog. If I were to take a picture of you right now you would be {}. Your tone and emotion would be considered {}".format(vit_to_string(result),emotion)
     
     # GPT Prompt Init
     gpt_dog = client.chat.completions.create(
