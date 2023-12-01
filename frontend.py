@@ -44,6 +44,11 @@ st.title("What Up Dog")
 uploaded_file = st.file_uploader("Choose an image...", type=['jpg','png','raw','dng','jpeg'])
 
 if uploaded_file is not None:
+    #save image
+    img_file = os.path.join("images",uploaded_file.name)
+    with open(img_file,"wb") as f:
+         f.write(uploaded_file.getbuffer())
+
     # Preprocess the image
     img = Image.open(uploaded_file).convert('RGB')
     img = img.resize((288, 288))  # adjust size as needed
@@ -67,7 +72,9 @@ if uploaded_file is not None:
         st.text("THAT'S NOT A DOG! (or our model didn't detect a dog, in which case we profusely apologize :( ))")
         
     #Setting dummy emotion
-    emotion = learn.predict(uploaded_file)[0]
+    emotion = learn.predict(img_file)[0]
+    if os.path.exists(img_file):
+        os.remove(img_file)
     final_string = "You are a dog. If I were to take a picture of you right now you would be {}. Your tone and emotion would be considered {}".format(vit_to_string(result),emotion)
     
     # GPT Prompt Init
