@@ -11,7 +11,7 @@ import modal
 
 #api boot
 client = OpenAI(
-    api_key=os.environ.get(st.secrets["api_key"]),
+    api_key=st.secrets["api_key"],
 )
 
 def vit_to_string(list_obj):
