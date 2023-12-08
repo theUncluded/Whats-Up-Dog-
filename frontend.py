@@ -7,11 +7,13 @@ import fastai.vision.all
 from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 from openai import OpenAI
 import os
+import modal 
 
 #api boot
 api = open("gpt_api.txt")
-os.environ["OPENAI_API_KEY"]= api.read()
+os.environ["OPENAI_API_KEY"]= st.secrets[gpt_api_key]
 client = OpenAI()
+
         
 def vit_to_string(list_obj):
   string_result = ''.join(map(str,result))
