@@ -1,9 +1,0 @@
-streamlit
-json
-numpy
-PIL
-tensorflow
-fastai
-transformers
-openai
-modal 

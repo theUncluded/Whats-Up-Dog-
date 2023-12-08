@@ -10,11 +10,10 @@ import os
 import modal 
 
 #api boot
-api = open("gpt_api.txt")
-os.environ["OPENAI_API_KEY"]= st.secrets[gpt_api_key]
-client = OpenAI()
+client = OpenAI(
+    api_key=os.environ.get(st.secrets["api_key"])
+)
 
-        
 def vit_to_string(list_obj):
   string_result = ''.join(map(str,result))
   string_result = string_result[19:]
