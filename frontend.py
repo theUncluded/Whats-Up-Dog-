@@ -7,11 +7,10 @@ import fastai.vision.all
 from transformers import pipeline, GPT2LMHeadModel, GPT2Tokenizer
 from openai import OpenAI
 import os
-import modal 
 
 #api boot
 client = OpenAI(
-    api_key=os.environ.get(st.secrets["api_key"])
+    api_key=st.secrets["api_key"],
 )
 
 def vit_to_string(list_obj):
